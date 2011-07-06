@@ -1,4 +1,4 @@
-Summary: An L2TP client/server, designed for VPN use.
+Summary: An L2TP client/server, designed for VPN use
 Name: openl2tp
 Version: 1.8
 Release: %mkrel 1
