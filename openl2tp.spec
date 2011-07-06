@@ -36,7 +36,7 @@ consists of
 
 %package devel
 Summary: OpenL2TP support files for plugin development
-Group: Development/Libraries
+Group: Development/Other
 
 %description devel
 This package contains support files for building plugins for OpenL2TP,
