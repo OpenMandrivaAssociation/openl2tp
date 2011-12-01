@@ -50,17 +50,17 @@ or applications that use the OpenL2TP APIs.
 make PPPD_VERSION=2.4.5
 
 %install
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT \
+[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+make install DESTDIR=%{buildroot} \
 	PPPD_VERSION=2.4.5
 
-%{__mkdir} -p $RPM_BUILD_ROOT/etc/rc.d/init.d $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
-%{__cp} -f etc/rc.d/init.d/openl2tpd $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/openl2tpd
-%{__cp} -f etc/sysconfig/openl2tpd $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/openl2tpd
+%{__mkdir} -p %{buildroot}/etc/rc.d/init.d %{buildroot}/%{_sysconfdir}/sysconfig
+%{__cp} -f etc/rc.d/init.d/openl2tpd %{buildroot}%{_sysconfdir}/rc.d/init.d/openl2tpd
+%{__cp} -f etc/sysconfig/openl2tpd %{buildroot}%{_sysconfdir}/sysconfig/openl2tpd
 
 %clean
-if [ "$RPM_BUILD_ROOT" != `echo $RPM_BUILD_ROOT | sed -e s/openl2tp-//` ]; then
-	rm -rf $RPM_BUILD_ROOT
+if [ "%{buildroot}" != `echo %{buildroot} | sed -e s/openl2tp-//` ]; then
+	rm -rf %{buildroot}
 fi
 
 %files
