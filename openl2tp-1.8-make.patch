@@ -1,0 +1,49 @@
+--- Makefile.old	2010-11-22 12:47:26.000000000 +0300
++++ Makefile	2011-07-06 18:38:43.726992543 +0400
+@@ -154,16 +154,16 @@
+ 
+ CPPFLAGS=		$(CPPFLAGS.l2tptest) $(CPPFLAGS-y)
+ CFLAGS=			-I. -Iusl -Icli -isystem include \
+-				-MMD -Wall -Werror -Wno-strict-aliasing \
++				-MMD -Wall -Werror -Wno-strict-aliasing -Wno-unused-but-set-variable \
+ 				$(CPPFLAGS) $(CPPFLAGS.dmalloc) \
+ 				-DSYS_LIBDIR=$(SYS_LIBDIR)
+ LDFLAGS.l2tpd=		-Wl,-E -L. -Lusl -lusl -ldl $(LIBS.dmalloc) -lc
+ LDFLAGS.l2tpconfig=	-Lcli -lcli -lreadline $(LIBS.dmalloc) $(READLINE_LDFLAGS) -lc
+ 
+-OPT_CFLAGS?=		-O
++OPT_CFLAGS?=		-O -Wno-unused-but-set-variable
+ 
+ ifeq ($(L2TP_DEBUG),y)
+-CFLAGS.optimize=	-g
++CFLAGS.optimize=	-g -Wno-unused-but-set-variable
+ CFLAGS.optimize+=	-DDEBUG
+ else
+ CFLAGS.optimize=	$(OPT_CFLAGS)
+@@ -198,7 +198,7 @@
+ .PHONY:			$(SUBDIRS:%=subdir-%)
+ 
+ $(SUBDIRS:%=subdir-%):	FORCE
+-			$(MAKE) -C $(@:subdir-%=%) $(MFLAGS) EXTRA_CFLAGS="$(CPPFLAGS)"
++			$(MAKE) -C $(@:subdir-%=%) $(MFLAGS) EXTRA_CFLAGS="$(CPPFLAGS)" -Wno-unused-but-set-variable
+ 
+ ifeq ($(L2TP_FEATURE_LOCAL_CONF_FILE),y)
+ # Config file parser
+@@ -250,7 +250,7 @@
+ generated-files:	$(RPC_FILES) $(PARSE_FILES) l2tp_options.h
+ 
+ clean:
+-			@for d in $(SUBDIRS); do $(MAKE) -C $$d $(MFLAGS) $@; if [ $$? -ne 0 ]; then exit 1; fi; done
++			@for d in $(SUBDIRS); do $(MAKE) -C $$d $(MFLAGS) -Wno-unused-but-set-variable  $@; if [ $$? -ne 0 ]; then exit 1; fi; done
+ 			-$(MAKE) -C redhat $(MFLAGS) $@
+ 			-$(RM) $(L2TPD_SRCS.o) $(L2TPCONFIG_SRCS.o) openl2tpd l2tpconfig $(RPC_FILES)
+ 			-$(RM) l2tp_options.h l2tp_options.h.tmp
+@@ -325,7 +325,7 @@
+ install-all:		all install-daemon install-app
+ 
+ install-daemon:
+-			@for d in $(filter-out usl,$(SUBDIRS)); do $(MAKE) -C $$d $(MFLAGS) EXTRA_CFLAGS="$(CPPFLAGS)" install; if [ $$? -ne 0 ]; then exit 1; fi; done
++			@for d in $(filter-out usl,$(SUBDIRS)); do $(MAKE) -C $$d $(MFLAGS) -Wno-unused-but-set-variable EXTRA_CFLAGS="$(CPPFLAGS)" install; if [ $$? -ne 0 ]; then exit 1; fi; done
+ 			$(INSTALL) -d $(DESTDIR)/usr/sbin
+ 			$(INSTALL) openl2tpd $(DESTDIR)/usr/sbin
+ 
