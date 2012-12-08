@@ -1,7 +1,7 @@
 Summary: An L2TP client/server, designed for VPN use
 Name: openl2tp
 Version: 1.8
-Release: %mkrel 1
+Release: %mkrel 2
 License: GPL
 Group: System/Base
 URL: ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
@@ -50,17 +50,17 @@ or applications that use the OpenL2TP APIs.
 make PPPD_VERSION=2.4.5
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
-make install DESTDIR=%{buildroot} \
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT \
 	PPPD_VERSION=2.4.5
 
-%{__mkdir} -p %{buildroot}/etc/rc.d/init.d %{buildroot}/%{_sysconfdir}/sysconfig
-%{__cp} -f etc/rc.d/init.d/openl2tpd %{buildroot}%{_sysconfdir}/rc.d/init.d/openl2tpd
-%{__cp} -f etc/sysconfig/openl2tpd %{buildroot}%{_sysconfdir}/sysconfig/openl2tpd
+%{__mkdir} -p $RPM_BUILD_ROOT/etc/rc.d/init.d $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
+%{__cp} -f etc/rc.d/init.d/openl2tpd $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/openl2tpd
+%{__cp} -f etc/sysconfig/openl2tpd $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/openl2tpd
 
 %clean
-if [ "%{buildroot}" != `echo %{buildroot} | sed -e s/openl2tp-//` ]; then
-	rm -rf %{buildroot}
+if [ "$RPM_BUILD_ROOT" != `echo $RPM_BUILD_ROOT | sed -e s/openl2tp-//` ]; then
+	rm -rf $RPM_BUILD_ROOT
 fi
 
 %files
@@ -87,3 +87,12 @@ fi
 %{_libdir}/openl2tp/l2tp_rpc.x
 %{_libdir}/openl2tp/l2tp_event.h
 %{_libdir}/openl2tp/event_sock.h
+
+
+%changelog
+* Wed Jul 06 2011 Александр Казанцев <kazancas@mandriva.org> 1.8-1
++ Revision: 689030
+- initial release for Mandriva
+- imported package openl2tp
+- Created package structure for openl2tp.
+
