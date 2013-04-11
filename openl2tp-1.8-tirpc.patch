@@ -1,0 +1,11 @@
+--- openl2tp-1.8/Makefile.orig	2013-04-11 12:44:39.501030413 +0100
++++ openl2tp-1.8/Makefile	2013-04-11 12:44:42.999030208 +0100
+@@ -181,7 +181,7 @@
+ endif
+ 
+ RPCGEN=			rpcgen
+-RPCGENFLAGS=		-N -M -C -L
++RPCGENFLAGS=		-N -C -L
+ 
+ .PHONY:			all clean distclean install daemon app test
+ 

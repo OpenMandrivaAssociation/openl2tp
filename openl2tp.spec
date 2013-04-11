@@ -7,6 +7,7 @@ Group: System/Base
 URL: ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
 Source0: %{name}-%{version}.tar.gz
 Patch0:	openl2tp-1.8-make.patch
+Patch1:	openl2tp-1.8-tirpc.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 Requires: ppp >= 2.4.5, readline >= 4.2, rpcbind
 ExclusiveOS: Linux
@@ -46,6 +47,7 @@ or applications that use the OpenL2TP APIs.
 %prep
 %setup -q
 %patch0 -p0
+%patch1 -p1
 
 %build
 make PPPD_VERSION=2.4.5
