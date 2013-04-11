@@ -1,7 +1,7 @@
 Summary: An L2TP client/server, designed for VPN use
 Name: openl2tp
 Version: 1.8
-Release: %mkrel 2
+Release: 3
 License: GPL
 Group: System/Base
 URL: ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
@@ -12,6 +12,7 @@ Requires: ppp >= 2.4.5, readline >= 4.2, rpcbind
 ExclusiveOS: Linux
 
 BuildRequires: ppp >= 2.4.5, readline-devel >= 4.2, glibc >= 2.4, flex, bison, kernel-headers >= 2.6.23
+BuildRequires:	tirpc-devel
 
 %description
 OpenL2TP is a complete implementation of RFC2661 - Layer Two Tunneling
