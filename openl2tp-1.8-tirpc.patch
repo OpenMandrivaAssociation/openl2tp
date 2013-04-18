@@ -1,11 +1,49 @@
---- openl2tp-1.8/Makefile.orig	2013-04-11 12:44:39.501030413 +0100
-+++ openl2tp-1.8/Makefile	2013-04-11 12:44:42.999030208 +0100
-@@ -181,7 +181,7 @@
- endif
+--- openl2tp-1.8/l2tp_api.c.bero	2013-04-18 13:25:06.112003545 +0200
++++ openl2tp-1.8/l2tp_api.c	2013-04-18 13:53:46.471496092 +0200
+@@ -446,11 +446,12 @@ int l2tp_api_rpc_check_request(SVCXPRT *
+ 	/* If remote RPC is not enabled and the request is from a 
+ 	 * non-loopback interface, reject the request.
+ 	 */
++	struct sockaddr_in *raddr=(struct sockaddr_in*)(xprt->xp_rtaddr.buf);
+ 	if ((!l2tp_opt_remote_rpc) &&
+-	    ((xprt->xp_raddr.sin_addr.s_addr != htonl(INADDR_LOOPBACK)) &&
+-	     (xprt->xp_raddr.sin_addr.s_addr != htonl(INADDR_ANY)))) {
++	    ((raddr->sin_addr.s_addr != htonl(INADDR_LOOPBACK)) &&
++	     (raddr->sin_addr.s_addr != htonl(INADDR_ANY)))) {
+ 		if (l2tp_opt_trace_flags & L2TP_DEBUG_API) {
+-			l2tp_log(LOG_ERR, "Rejecting RPC request from %s", inet_ntoa(xprt->xp_raddr.sin_addr));
++			l2tp_log(LOG_ERR, "Rejecting RPC request from %s", inet_ntoa(raddr->sin_addr));
+ 		}
+ 		svcerr_auth(xprt, AUTH_TOOWEAK);
+ 		return -EPERM;
+@@ -527,7 +528,7 @@ void l2tp_api_init(void)
+ 		l2tp_log(LOG_ERR, "unable to register UDP RPC program");
+ 		exit(1);
+ 	}
+-	result = usl_fd_add_fd(l2tp_rpc_udp_xprt->xp_sock, l2tp_api_rpc_msg, l2tp_rpc_udp_xprt);
++	result = usl_fd_add_fd(l2tp_rpc_udp_xprt->xp_fd, l2tp_api_rpc_msg, l2tp_rpc_udp_xprt);
+ 	if (result < 0) {
+ 		l2tp_log(LOG_ERR, "unable to register UDP RPC handler");
+ 		exit(1);
+@@ -538,7 +539,7 @@ void l2tp_api_init(void)
+ 		l2tp_log(LOG_ERR, "unable to register TCP RPC program");
+ 		exit(1);
+ 	}
+-	result = usl_fd_add_fd(l2tp_rpc_tcp_xprt->xp_sock, l2tp_api_rpc_msg, l2tp_rpc_tcp_xprt);
++	result = usl_fd_add_fd(l2tp_rpc_tcp_xprt->xp_fd, l2tp_api_rpc_msg, l2tp_rpc_tcp_xprt);
+ 	if (result < 0) {
+ 		l2tp_log(LOG_ERR, "unable to register TCP RPC handler");
+ 		exit(1);
+--- openl2tp-1.8/Makefile.bero	2013-04-18 13:58:23.032038610 +0200
++++ openl2tp-1.8/Makefile	2013-04-18 13:58:31.223936197 +0200
+@@ -157,8 +157,8 @@ CFLAGS=			-I. -Iusl -Icli -isystem inclu
+ 				-MMD -Wall -Werror -Wno-strict-aliasing -Wno-unused-but-set-variable \
+ 				$(CPPFLAGS) $(CPPFLAGS.dmalloc) \
+ 				-DSYS_LIBDIR=$(SYS_LIBDIR)
+-LDFLAGS.l2tpd=		-Wl,-E -L. -Lusl -lusl -ldl $(LIBS.dmalloc) -lc
+-LDFLAGS.l2tpconfig=	-Lcli -lcli -lreadline $(LIBS.dmalloc) $(READLINE_LDFLAGS) -lc
++LDFLAGS.l2tpd=		-Wl,-E -L. -Lusl -lusl -ldl $(LIBS.dmalloc) -lc -ltirpc
++LDFLAGS.l2tpconfig=	-Lcli -lcli -lreadline $(LIBS.dmalloc) $(READLINE_LDFLAGS) -lc -ltirpc
  
- RPCGEN=			rpcgen
--RPCGENFLAGS=		-N -M -C -L
-+RPCGENFLAGS=		-N -C -L
- 
- .PHONY:			all clean distclean install daemon app test
+ OPT_CFLAGS?=		-O -Wno-unused-but-set-variable
  

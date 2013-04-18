@@ -7,13 +7,12 @@ Group: System/Base
 URL: ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
 Source0: %{name}-%{version}.tar.gz
 Patch0:	openl2tp-1.8-make.patch
-Patch1:	openl2tp-1.8-tirpc.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
+Patch1: openl2tp-1.8-tirpc.patch
 Requires: ppp >= 2.4.5, readline >= 4.2, rpcbind
 ExclusiveOS: Linux
 
 BuildRequires: ppp >= 2.4.5, readline-devel >= 4.2, glibc >= 2.4, flex, bison, kernel-headers >= 2.6.23
-BuildRequires:	tirpc-devel
+BuildRequires:	tirpc-devel >= 0.2.3-2
 
 %description
 OpenL2TP is a complete implementation of RFC2661 - Layer Two Tunneling
@@ -47,7 +46,7 @@ or applications that use the OpenL2TP APIs.
 %prep
 %setup -q
 %patch0 -p0
-%patch1 -p1
+%patch1 -p1 -b .tirpc~
 
 %build
 make PPPD_VERSION=2.4.5
