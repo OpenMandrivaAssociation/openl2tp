@@ -11,7 +11,7 @@ Patch1: openl2tp-1.8-tirpc.patch
 Requires: ppp >= 2.4.5, readline >= 4.2, rpcbind
 ExclusiveOS: Linux
 
-BuildRequires: ppp >= 2.4.5, readline-devel >= 4.2, glibc >= 2.4, flex, bison, kernel-headers >= 2.6.23
+BuildRequires: ppp >= 2.4.5, readline-devel >= 4.2, glibc >= 2.4, flex-devel, bison, kernel-headers >= 2.6.23
 BuildRequires:	tirpc-devel >= 0.2.3-2
 
 %description
