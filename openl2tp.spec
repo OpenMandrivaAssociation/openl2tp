@@ -1,3 +1,5 @@
+%bcond_with     rpc
+
 Summary: An L2TP client/server, designed for VPN use
 Name: openl2tp
 Version: 1.8
@@ -47,10 +49,15 @@ or applications that use the OpenL2TP APIs.
 %prep
 %setup -q
 %patch0 -p0
-%patch1 -p1
+#patch1 -p1
+
+# Disable rpc temporarily while our tirpc isnt compatible
+%if %{without rpc}
+perl -p -i -e 's/L2TP_FEATURE_RPC_MANAGEMENT=\ty//' Makefile
+%endif
 
 %build
-make PPPD_VERSION=2.4.5
+make PPPD_VERSION=2.4.5 
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
@@ -70,13 +77,15 @@ fi
 %defattr(-,root,root,-)
 %doc README LICENSE
 %dir %{_libdir}/openl2tp
+%if %{with rpc}
+%{_mandir}/man1/l2tpconfig.1.*
 %{_bindir}/l2tpconfig
+%endif
 %{_sbindir}/openl2tpd
 %{_libdir}/openl2tp/ppp_null.so
 %{_libdir}/openl2tp/ppp_unix.so
 %{_libdir}/openl2tp/ipsec.so
 %{_libdir}/openl2tp/event_sock.so
-%{_mandir}/man1/l2tpconfig.1.*
 %{_mandir}/man4/openl2tp_rpc.4.*
 %{_mandir}/man5/openl2tpd.conf.5.*
 %{_mandir}/man7/openl2tp.7.*
