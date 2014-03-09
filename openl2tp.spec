@@ -1,18 +1,24 @@
-Summary: An L2TP client/server, designed for VPN use
-Name: openl2tp
-Version: 1.8
-Release: 4
-License: GPL
-Group: System/Base
-URL: ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
-Source0: %{name}-%{version}.tar.gz
-Patch0:	openl2tp-1.8-make.patch
-Patch1: openl2tp-1.8-tirpc.patch
-Requires: ppp >= 2.4.5, readline >= 4.2, rpcbind
-ExclusiveOS: Linux
+%bcond_with     rpc
 
-BuildRequires: ppp >= 2.4.5, readline-devel >= 4.2, glibc >= 2.4, flex-devel, bison, kernel-headers >= 2.6.23
-BuildRequires:	tirpc-devel >= 0.2.3-2
+Summary:	An L2TP client/server, designed for VPN use
+Name:		openl2tp
+Version:	1.8
+Release:	6
+License:	GPLv2
+Group:		System/Base
+Url:		ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
+Source0:	%{name}-%{version}.tar.gz
+Patch0:		openl2tp-1.8-make.patch
+Patch1:		openl2tp-1.8-tirpc.patch
+Requires:	ppp >= 2.4.5
+Requires:	readline >= 4.2
+Requires:	rpcbind
+BuildRequires:	bison
+BuildRequires:	ppp >= 2.4.5
+BuildRequires:	kernel-headers >= 2.6.23
+BuildRequires:	flex-devel
+BuildRequires:	readline-devel >= 4.2
+BuildRequires:	pkgconfig(libtirpc)
 
 %description
 OpenL2TP is a complete implementation of RFC2661 - Layer Two Tunneling
@@ -22,22 +28,18 @@ than 100 simultaneous connected users. It may also be used as a client
 on a home PC or roadwarrior laptop.
 
 OpenL2TP has been designed and implemented specifically for Linux. It
-consists of
-
+consists of:
 - a daemon, openl2tpd, handling the L2TP control protocol exchanges
   for all tunnels and sessions
-
 - a plugin for pppd to allow its PPP connections to run over L2TP
   sessions
-
 - a Linux kernel driver for efficient datapath (integrated into the
   standard kernel from 2.6.23).
-
 - a command line application, l2tpconfig, for management.
 
 %package devel
-Summary: OpenL2TP support files for plugin development
-Group: Development/Other
+Summary:	OpenL2TP support files for plugin development
+Group:		Development/Other
 
 %description devel
 This package contains support files for building plugins for OpenL2TP,
@@ -45,37 +47,34 @@ or applications that use the OpenL2TP APIs.
 
 %prep
 %setup -q
-%patch0 -p0
-%patch1 -p1 -b .tirpc~
+%apply_patches
+# Disable rpc temporarily while our tirpc isnt compatible
+%if %{without rpc}
+perl -p -i -e 's/L2TP_FEATURE_RPC_MANAGEMENT=\ty//' Makefile
+%endif
 
 %build
-make PPPD_VERSION=2.4.5
+make PPPD_VERSION=2.4.5 
 
 %install
-[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT \
-	PPPD_VERSION=2.4.5
+%makeinstall_std PPPD_VERSION=2.4.5
 
-%{__mkdir} -p $RPM_BUILD_ROOT/etc/rc.d/init.d $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
-%{__cp} -f etc/rc.d/init.d/openl2tpd $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/openl2tpd
-%{__cp} -f etc/sysconfig/openl2tpd $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/openl2tpd
-
-%clean
-if [ "$RPM_BUILD_ROOT" != `echo $RPM_BUILD_ROOT | sed -e s/openl2tp-//` ]; then
-	rm -rf $RPM_BUILD_ROOT
-fi
+mkdir -p %{buildroot}/etc/rc.d/init.d %{buildroot}/%{_sysconfdir}/sysconfig
+cp -f etc/rc.d/init.d/openl2tpd %{buildroot}%{_sysconfdir}/rc.d/init.d/openl2tpd
+cp -f etc/sysconfig/openl2tpd %{buildroot}%{_sysconfdir}/sysconfig/openl2tpd
 
 %files
-%defattr(-,root,root,-)
 %doc README LICENSE
 %dir %{_libdir}/openl2tp
+%if %{with rpc}
+%{_mandir}/man1/l2tpconfig.1.*
 %{_bindir}/l2tpconfig
+%endif
 %{_sbindir}/openl2tpd
 %{_libdir}/openl2tp/ppp_null.so
 %{_libdir}/openl2tp/ppp_unix.so
 %{_libdir}/openl2tp/ipsec.so
 %{_libdir}/openl2tp/event_sock.so
-%{_mandir}/man1/l2tpconfig.1.*
 %{_mandir}/man4/openl2tp_rpc.4.*
 %{_mandir}/man5/openl2tpd.conf.5.*
 %{_mandir}/man7/openl2tp.7.*
@@ -84,17 +83,8 @@ fi
 %config %{_sysconfdir}/sysconfig/openl2tpd
 
 %files devel
-%defattr(-,root,root,-)
 %doc plugins/README doc/README.event_sock
 %{_libdir}/openl2tp/l2tp_rpc.x
 %{_libdir}/openl2tp/l2tp_event.h
 %{_libdir}/openl2tp/event_sock.h
-
-
-%changelog
-* Wed Jul 06 2011 Александр Казанцев <kazancas@mandriva.org> 1.8-1
-+ Revision: 689030
-- initial release for Mandriva
-- imported package openl2tp
-- Created package structure for openl2tp.
 
