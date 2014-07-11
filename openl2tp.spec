@@ -3,7 +3,7 @@
 Summary:	An L2TP client/server, designed for VPN use
 Name:		openl2tp
 Version:	1.8
-Release:	8
+Release:	9
 License:	GPLv2
 Group:		System/Base
 Url:		ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
