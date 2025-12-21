@@ -13,6 +13,7 @@ Patch1:		openl2tp-1.8-tirpc.patch
 Requires:	ppp >= 2.4.5
 Requires:	readline >= 4.2
 Requires:	rpcbind
+BuildRequires:	make
 BuildRequires:	bison
 BuildRequires:	ppp >= 2.4.5
 BuildRequires:	kernel-headers >= 2.6.23
